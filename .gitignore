@@ -1,0 +1,12 @@
+# Entornos virtuales
+venv/
+env/
+.env
+
+# Caché de Python
+__pycache__/
+*.pyc
+
+# Caché de Streamlit y SO
+.streamlit/
+.DS_Store
