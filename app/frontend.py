@@ -2,40 +2,37 @@ import streamlit as st
 import requests
 
 # Configuración de la página
-st.set_page_config(page_title="Traductor/Generador RNN", layout="centered")
+st.set_page_config(page_title="Traductor IA (Seq2Seq)", page_icon="🌍")
 
-st.title("🤖 Interfaz RNN: Encoder-Decoder")
-st.write("Ingresa el texto para ser procesado por el modelo.")
+st.title("🌍 Traductor Neuronal: Español a Inglés")
+st.markdown("""
+Esta aplicación utiliza un modelo **Encoder-Decoder con Atención de Bahdanau** entrenado para traducir oraciones del español al inglés.
+""")
 
-# -------------------------------------------------------------------
-# CONFIGURACIÓN DE RED
-# Cambia esta URL por la que te dé Render cuando subas la API
-# -------------------------------------------------------------------
-API_URL = "http://localhost:8000/predict" 
+# URL de tu API (Ajustar cuando despliegues en Render)
+# Cuando pruebes en tu PC, usa 'http://localhost:8000/traducir'
+API_URL = "http://localhost:8000/traducir"
 
-# Formulario de entrada
-texto_usuario = st.text_area("Texto de entrada:", height=100)
+# Área de texto para el usuario
+texto_espanol = st.text_area("Ingresa el texto en español:", placeholder="Ejemplo: ¿Cómo estás hoy?")
 
-if st.button("Generar Respuesta", type="primary"):
-    if texto_usuario.strip() == "":
-        st.warning("⚠️ Por favor, ingresa algún texto antes de procesar.")
+if st.button("Traducir"):
+    if texto_espanol.strip() == "":
+        st.warning("Por favor, ingresa un texto para traducir.")
     else:
-        with st.spinner("Procesando en el backend..."):
+        with st.spinner('Traduciendo con el modelo...'):
             try:
-                # Hacer la petición POST a FastAPI
-                payload = {"text": texto_usuario}
-                response = requests.post(API_URL, json=payload)
+                # Petición POST a la API
+                response = requests.post(API_URL, json={"texto": texto_espanol})
                 
                 if response.status_code == 200:
-                    datos = response.json()
-                    st.success("¡Completado!")
+                    data = response.json()
+                    traduccion = data.get("traduccion", "")
                     
-                    st.subheader("Resultado:")
-                    st.info(datos["prediction"])
+                    st.success("¡Traducción completada!")
+                    st.info(f"**Traducción:** {traduccion}")
                 else:
-                    st.error(f"Error en la API (Código {response.status_code}): {response.text}")
-                    
+                    st.error(f"Error en la API: {response.json().get('detail', 'Desconocido')}")
+            
             except requests.exceptions.ConnectionError:
-                st.error("❌ No se pudo conectar con el backend. Asegúrate de que FastAPI esté corriendo (uvicorn api.main:app --reload).")
-            except Exception as e:
-                st.error(f"❌ Ocurrió un error inesperado: {e}")
+                st.error("No se pudo conectar con el backend. ¿Está corriendo FastAPI en el puerto 8000?")
