@@ -11,7 +11,7 @@ Esta aplicación utiliza un modelo **Encoder-Decoder con Atención de Bahdanau**
 
 # URL de tu API (Ajustar cuando despliegues en Render)
 # Cuando pruebes en tu PC, usa 'http://localhost:8000/traducir'
-API_URL = "http://localhost:8000/traducir"
+API_URL = "https://api-rnn.onrender.com/traducir"
 
 # Área de texto para el usuario
 texto_espanol = st.text_area("Ingresa el texto en español:", placeholder="Ejemplo: ¿Cómo estás hoy?")
